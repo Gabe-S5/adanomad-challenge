@@ -81,7 +81,8 @@ This project is a PDF viewer and keyword search application developed as part of
 
 ## Screenshot
 
-![Application Screenshot](./screenshot.png)
+![Application Screenshot](./highlight_screenshot.png)
+![Scrolling Screenshot](./scrollTo_screenshot.png)
 
 *The screenshot above shows the main interface of the PDF viewer application, including the document display, search functionality, and sidebar.*
 

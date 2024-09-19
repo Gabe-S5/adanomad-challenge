@@ -33,10 +33,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ highlights, resetHighlights, t
             {expanded ? <ChevronFirst /> : <ChevronLast />}
           </button>
         </div>
-        <div className="p-2 mx-8 my-1 flex justify-center border-2 items-center">
+        <div className={`p-2 flex justify-center items-center ${expanded ? "mx-8 my-1 border-2" : ""}`}>
           <button onClick={() => toggleDocument()}>{expanded ? "Remove PDF" : ""}</button>
         </div>
-        <div className="p-2 mx-8 my-1 flex justify-center border-2 items-center">
+        <div className={`p-2 flex justify-center items-center ${expanded ? "mx-8 my-1 border-2" : ""}`}>
           <button onClick={() => resetHighlights()}>{expanded ? "Reset Highlights" : ""}</button>
         </div>
         <ul className={`flex-1 px-2 overflow-hidden ${expanded ? "w-60 overflow-y-auto" : "w-0 overflow-y-hidden"}`}>
