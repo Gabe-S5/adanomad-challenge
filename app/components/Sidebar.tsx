@@ -20,10 +20,10 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ highlights, resetHighlights, toggleDocument, scrollToHighlight }) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <aside className="h-screen overflow-y-auto">
+    <aside className="h-screen">
       <nav className="h-full flex flex-col bg-white border-r shadow-sm">
         <div className="p-4 pb-2 flex justify-end items-end">
           <button
@@ -33,7 +33,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ highlights, resetHighlights, t
             {expanded ? <ChevronFirst /> : <ChevronLast />}
           </button>
         </div>
-        <ul className={`flex-1 overflow-hidden ${!expanded ? "w-60" : "w-0"}`}>
+        <div className="p-2 mx-8 my-1 flex justify-center border-2 items-center">
+          <button onClick={() => toggleDocument()}>{expanded ? "Remove PDF" : ""}</button>
+        </div>
+        <div className="p-2 mx-8 my-1 flex justify-center border-2 items-center">
+          <button onClick={() => resetHighlights()}>{expanded ? "Reset Highlights" : ""}</button>
+        </div>
+        <ul className={`flex-1 px-2 overflow-hidden ${expanded ? "w-60 overflow-y-auto" : "w-0 overflow-y-hidden"}`}>
           {highlights.map((highlight) => (
             <li
               className="border-2 relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer"
