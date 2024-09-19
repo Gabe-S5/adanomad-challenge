@@ -56,14 +56,7 @@ export const searchPdf = async (
       for (const item of textItems) {
         if (lastY !== item.transform[5] && lineItems.length > 0) {
           // Process the completed line
-          processLine(
-            lineItems,
-            textLine,
-            keywords,
-            pageNum,
-            highlights,
-            adjustedViewport
-          );
+          processLine(lineItems, textLine, keywords, pageNum, highlights, adjustedViewport);
           textLine = "";
           lineItems = [];
         }
@@ -74,21 +67,27 @@ export const searchPdf = async (
 
       // Process the last line if it exists
       if (lineItems.length > 0) {
-        processLine(
-          lineItems,
-          textLine,
-          keywords,
-          pageNum,
-          highlights,
-          adjustedViewport
-        );
+        processLine(lineItems, textLine, keywords, pageNum, highlights, adjustedViewport);
       }
     }
   } catch (error) {
     console.error("Error searching PDF:", error);
   }
-
   return highlights;
+};
+
+const getCharOffset = (item: any, charIndex: number): number => {
+  if (!item || charIndex <= 0 || charIndex > item.str.length) {
+    return 0;
+  }
+
+  // The proportion of the text that has been matched within this item
+  const substring = item.str.slice(0, charIndex);
+
+  // Calculate the proportional width of the matched substring
+  const substringWidth = (substring.length / item.str.length) * item.width;
+
+  return substringWidth;
 };
 
 /**
@@ -122,14 +121,12 @@ const processLine = (
       // Find the start and end items for the matched keyword
       let currentIndex = 0;
       for (const item of lineItems) {
-        if (
-          currentIndex + item.str.length > startIndex &&
-          startItem === lineItems[0]
-        ) {
+        if (currentIndex + item.str.length > startIndex && startItem === lineItems[0]) {
           startItem = item;
         }
         if (currentIndex + item.str.length >= endIndex) {
           endItem = item;
+
           break;
         }
         currentIndex += item.str.length;
@@ -137,12 +134,17 @@ const processLine = (
 
       // Calculate coordinates for the highlight
       // FIXME: These calculations might not be accurate for all PDFs
-      const x1 = startItem.transform[4];
-      const y1 = startItem.transform[5];
-      const x2 = endItem.transform[4] + endItem.width;
-      const y2 =
-        startItem.transform[5] +
-        Math.max(...lineItems.map((item) => item.height));
+      // Start of match in startItem
+      const x1 = startItem.transform[4] + getCharOffset(startItem, startIndex - currentIndex);
+
+      const y1 = startItem.transform[5]; // Y-coordinate of the start
+
+      // For x2, calculate how far into the endItem the match ends
+      const matchLengthInEndItem = endIndex - currentIndex;
+      const x2 = endItem.transform[4] + getCharOffset(endItem, matchLengthInEndItem); // End of match in endItem
+
+      // y2 stays the same as y1, assuming the match is on the same line
+      const y2 = startItem.transform[5] + Math.max(...lineItems.map((item) => item.height));
 
       // Convert coordinates to viewport points
       const [tx1, ty1] = viewport.convertToViewportPoint(x1, y1);
@@ -162,8 +164,8 @@ const processLine = (
             y1: Math.min(flippedY1, flippedY2),
             x2: tx2,
             y2: Math.max(flippedY1, flippedY2),
-            width: FIXED_WIDTH,
-            height: FIXED_HEIGHT,
+            width: viewport.width,
+            height: viewport.height,
             pageNumber,
           },
           rects: [
@@ -172,8 +174,8 @@ const processLine = (
               y1: Math.min(flippedY1, flippedY2),
               x2: tx2,
               y2: Math.max(flippedY1, flippedY2),
-              width: FIXED_WIDTH,
-              height: FIXED_HEIGHT,
+              width: viewport.width,
+              height: viewport.height,
               pageNumber,
             },
           ],

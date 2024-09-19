@@ -85,13 +85,10 @@ This project is a PDF viewer and keyword search application developed as part of
 
 *The screenshot above shows the main interface of the PDF viewer application, including the document display, search functionality, and sidebar.*
 
-## Future Improvements
-
-- Implement annotation tools (e.g., freehand drawing, text notes)
-- Add support for multiple document comparison
-- Enhance mobile responsiveness for better small-screen experience
-- Implement user authentication and document permissions
-- Optimize performance for large PDF files
+## Changes Made
+- Fixed incorrect highlighting locations
+- Added sidebar
+- Added a scroll to view on highlighted words
 
 ## Contributing
 
